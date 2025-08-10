@@ -10,9 +10,9 @@ class User(db.Model):
     """
     __tablename__ = 'users'
     id_user = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(50), nullable=False)
+    username = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
+    password_hash = db.Column(db.String(100), nullable=False)
 
     # Relaciones de SQLAlchemy
     # 'mascota' es la relación 'uno a uno' con la tabla Mascotas.

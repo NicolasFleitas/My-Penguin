@@ -37,7 +37,7 @@ def create_app():
                 return redirect(url_for('register'))
             if check_password_hash(user.password_hash, password):
                 session.clear()
-                session['user_id'] = user.id
+                session['user_id'] = user.id_user
                 session['username'] = user.username
                 flash(f'Bienvenido, {user.username}!', 'success')
                 return redirect(url_for('index'))
