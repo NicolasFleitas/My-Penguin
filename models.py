@@ -15,21 +15,13 @@ class User(db.Model):
     password_hash = db.Column(db.String(100), nullable=False)
 
     # Relaciones de SQLAlchemy
-    # 'mascota' es la relación 'uno a uno' con la tabla Mascotas.
-    # 'backref' crea un atributo 'propietario' en la clase Mascota.
-    # 'uselist=False' es para que la relación sea de uno a uno.
-    # Usamos "cascade='all, delete-orphan'" para asegurar que al eliminar un usuario,
-    # también se elimine su mascota y todas sus tareas asociadas.
-    # Esto es intencional y debe coincidir con la lógica de negocio.
-    mascota = db.relationship('Mascota', backref='propietario', uselist=False, cascade="all, delete-orphan")
-
-    # 'tareas' es la relación 'uno a muchos' con la tabla Tareas.
-    # 'lazy=True' carga la lista de tareas solo cuando la necesitas.
-    # También usamos "cascade='all, delete-orphan'" para eliminar todas las tareas del usuario al eliminarlo.
-    tareas = db.relationship('Tarea', backref='creador', lazy=True, cascade="all, delete-orphan")
+    # Usamos back_populates para definir relaciones explícitas en ambos lados,
+    # lo cual ayuda a evitar errores de recursión.
+    mascota = db.relationship('Mascota', back_populates='propietario', uselist=False, cascade="all, delete-orphan")
+    tareas = db.relationship('Tarea', back_populates='propietario', lazy=True, cascade="all, delete-orphan")
 
     def __repr__(self):
-        return f'<Usuario {self.nombre}>'
+        return f'<User {self.username}>'
 
 class Mascota(db.Model):
     """
@@ -42,11 +34,11 @@ class Mascota(db.Model):
     puntos_totales = db.Column(db.Integer, default=0)
     
     # Clave foránea que la relaciona con el usuario.
-    # 'unique=True' es crucial para la relación de uno a uno.
-    # Esto asegura que cada mascota esté asociada a un único usuario, 
-    # implementando la relación uno a uno en la base de datos.
     id_usuario = db.Column(db.Integer, db.ForeignKey('users.id_user'), unique=True, nullable=False)
     
+    # Relación de vuelta al propietario
+    propietario = db.relationship('User', back_populates='mascota')
+
     def __repr__(self):
         return f'<Mascota {self.nombre_mascota}>'
 
@@ -61,12 +53,14 @@ class Tarea(db.Model):
     descripcion_tarea = db.Column(db.String(100), nullable=False)
     estado = db.Column(db.Boolean, default=False)
     fecha_creacion = db.Column(db.Date, default=date.today())
-    puntos_tarea = db.Column(db.Integer, nullable=False)
+    puntos_tarea = db.Column(db.Integer, default=1)
     fecha_limite = db.Column(db.Date, nullable=True)
 
     # Clave foránea que la relaciona con el usuario.
     id_usuario = db.Column(db.Integer, db.ForeignKey('users.id_user'), nullable=False)
+    
+    # Relación de vuelta al propietario
+    propietario = db.relationship('User', back_populates='tareas')
 
     def __repr__(self):
         return f'<Tarea {self.descripcion_tarea}>'
-
