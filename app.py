@@ -16,16 +16,30 @@ def create_app():
         db.create_all()
 
     @app.route('/')
-    def index():
+    def home():
+        """
+        Ruta para la página de inicio pública.
+        No requiere que el usuario esté logueado.
+        """
+        return render_template('home.html')
+
+    @app.route('/dashboard')
+    def dashboard():
+        """
+        Ruta para el panel de control del usuario.
+        Requiere que el usuario esté logueado.
+        """
         if 'user_id' not in session:
-            flash('Debes iniciar sesión para acceder.', 'warning')
+            flash('Debes iniciar sesión para acceder al panel de control.', 'warning')
             return redirect(url_for('login'))
+        
         user = User.query.get(session['user_id'])
         if not user:
             session.clear()
             flash('Cuenta no encontrada. Por favor inicia sesión de nuevo.', 'danger')
             return redirect(url_for('login'))
-        return render_template('index.html', user=user)
+        
+        return render_template('dashboard.html', user=user)
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():
@@ -41,7 +55,7 @@ def create_app():
                 session['user_id'] = user.id_user
                 session['username'] = user.username
                 flash(f'Bienvenido, {user.username}!', 'success')
-                return redirect(url_for('index'))
+                return redirect(url_for('dashboard'))
             else:
                 flash('Contraseña incorrecta. Inténtalo de nuevo.', 'danger')
                 return render_template('login.html', username=username)

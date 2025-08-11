@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Estrategias Lúdicas{% endblock %}
+
+{% block content %}
+<main class="hero-section">
+  <div class="row align-items-center justify-content-center g-5">
+    <div class="col-12 col-lg-6 text-center text-lg-start">
+      <article>
+        <h1 class="display-4 fw-bold">Aprende y Juega</h1>
+        <p class="lead mt-3 text-secondary">
+          ¡Convierte tus sesiones de estudio en una aventura! En nuestra plataforma, cada tarea completada es una victoria que ayuda a tu mascota virtual a ganar vidas y crecer.
+        </p>
+      </article>
+      {% if not session.get('user_id') %}
+      <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-3 mt-4">
+        <a class="btn btn-primary btn-lg px-4" href="{{ url_for('login') }}">Inicia sesión</a>
+        <a class="btn btn-outline-secondary btn-lg px-4" href="{{ url_for('register') }}">Regístrate</a>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="col-10 col-lg-6">
+      <aside>
+        <img src="{{ url_for('static', filename='boy_studying.jpg') }}" alt="Chico estudiando con su mascota virtual" class="img-fluid rounded-4 shadow-lg">
+      </aside>
+    </div>
+  </div>
+
+  <div class="cta-section d-flex flex-column flex-md-row align-items-center justify-content-center mt-5 p-4 rounded-4 shadow-sm w-100 mx-auto" style="max-width: 900px;">
+    <img src="{{ url_for('static', filename='penguopenclose.gif') }}" alt="Pingüino animado" class="img-fluid mb-3 mb-md-0 me-md-4" style="max-height: 70px;">
+    <div class="text-center text-md-start">
+      <h5 class="fw-bold mb-1">¿Listo para empezar la aventura?</h5>
+      <p class="mb-2 text-secondary">Prueba el asistente virtual y empieza a ganar recompensas.</p>
+      <a class="btn btn-info text-white" href="{{ url_for('asistente') }}">Probar ahora</a>
+    </div>
+  </div>
+</main>
+{% endblock %}
