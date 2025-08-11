@@ -3,57 +3,54 @@
 {% block title %}Asistente de Tareas{% endblock %}
 
 {% block content %}
-<main class="container my-4">
-  <div class="row">
+<main>
+  <div class="text-center mb-4">
     <h3>Lista de Tareas</h3>
-    <h4>Cada vez que completes una tarea, Pengu gana vida!</h4>
-    
-    <aside class="col-12 col-md-4 mb-4">
-      <div class="card shadow-sm p-3 h-100 d-flex flex-column align-items-center justify-content-center">
-        <img src="{{ url_for('static', filename='bigpengu.png') }}" alt="pinguino" class="img-fluid mb-3" style="max-height: 250px;" />
+    <p class="text-secondary">Cada vez que completes una tarea, ¡Pengu gana vida!</p>
+  </div>
+  
+  <div class="row g-4">
+    <aside class="col-12 col-md-4">
+      <div class="card p-3 h-100 d-flex flex-column align-items-center justify-content-center text-center">
+        <img src="{{ url_for('static', filename='bigpengu.png') }}" alt="Mascota Pengu" class="img-fluid mb-3" style="max-height: 200px;" />
         <h5 class="fw-bold">Puntos de Pengu: <span id="puntos-mascota">{{ mascota.puntos_totales }}</span></h5>
-        <div id="hearts-container" class="d-flex gap-2 mt-2">
+        <div id="hearts-container" class="d-flex flex-wrap justify-content-center gap-2 mt-2">
             {% for i in range(mascota.puntos_totales) %}
-                <img src="{{ url_for('static', filename='hearts.png') }}" alt="corazón" class="heart-icon" style="max-height: 30px;">
+                <img src="{{ url_for('static', filename='hearts.png') }}" alt="corazón" class="heart-icon">
             {% endfor %}
         </div>
       </div>
     </aside>
 
-    <div class="content-area col-12 col-md-8">
-      <div class="card shadow-sm p-4 h-100 d-flex flex-column">
-        <!-- Formulario para agregar tarea -->
-        <h4 class="mb-3">Nueva Tarea</h4>
+    <div class="col-12 col-md-8">
+      <div class="card p-4 h-100">
+        <h4 class="mb-3 fw-bold">Nueva Tarea</h4>
         <form id="taskForm" class="d-flex flex-column flex-md-row gap-2 mb-4">
-          <input type="text" id="inputMessage" placeholder="Escribe tu tarea (ej: 'Leer 20 páginas' | 5 puntos)" class="form-control flex-grow-1" required />
-          <input type="date" id="inputDate" class="form-control" />
+          <input type="text" id="inputMessage" placeholder="Escribe tu tarea (ej: 'Leer 20 páginas | 5 puntos')" class="form-control flex-grow-1" required />
+          <input type="date" id="inputDate" class="form-control" style="max-width: 180px;" />
           <button type="submit" class="btn btn-primary">Agregar</button>
         </form>
         
-        <!-- Lista de tareas -->
-        <h4 class="mb-3">Mis Tareas</h4>
+        <h4 class="mb-3 fw-bold">Mis Tareas</h4>
         <div id="messagesContainer" class="list-group">
           {% for tarea in tareas %}
             <div class="list-group-item d-flex align-items-center justify-content-between {% if tarea.estado %}list-group-item-success{% endif %}">
               <div class="d-flex align-items-center">
-                <input type="checkbox" class="form-check-input me-3" {% if tarea.estado %}checked disabled{% endif %} onclick="completarTarea({{ tarea.id_tarea }})">
+                <input type="checkbox" class="form-check-input me-3" style="transform: scale(1.2);" {% if tarea.estado %}checked disabled{% endif %} onclick="completarTarea({{ tarea.id_tarea }})">
                 <div>
                   <h6 class="mb-0 {% if tarea.estado %}text-decoration-line-through{% endif %}">{{ tarea.descripcion_tarea }}</h6>
-                  <small class="text-muted">Puntos: {{ tarea.puntos_tarea }} | Creada: {{ tarea.fecha_creacion }}</small>
+                  <small class="text-muted">Puntos: {{ tarea.puntos_tarea }} | Creada: {{ tarea.fecha_creacion.strftime('%d-%m-%Y') }}</small>
                   {% if tarea.fecha_limite %}
-                    <small class="text-danger d-block">Fecha límite: {{ tarea.fecha_limite }}</small>
+                    <small class="text-danger d-block">Límite: {{ tarea.fecha_limite.strftime('%d-%m-%Y') }}</small>
                   {% endif %}
                 </div>
               </div>
               <button class="btn btn-sm btn-outline-danger" onclick="eliminarTarea({{ tarea.id_tarea }})">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM6 2v1h4V2H6zm3 10V4H4v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1z"/>
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM6 2v1h4V2H6zm3 10V4H4v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1z"/></svg>
               </button>
             </div>
           {% else %}
-            <p class="text-center text-muted">¡Parece que no tienes tareas! Agrega una para empezar.</p>
+            <p class="text-center text-muted mt-3">¡No tienes tareas pendientes! Agrega una para empezar.</p>
           {% endfor %}
         </div>
       </div>
@@ -63,8 +60,9 @@
 {% endblock %}
 
 {% block scripts %}
+{{ super() }}
 <script>
-  // Script para manejar la lógica del frontend
+  
   const taskForm = document.getElementById('taskForm');
   const inputMessage = document.getElementById('inputMessage');
   const inputDate = document.getElementById('inputDate');
@@ -90,9 +88,7 @@
     try {
         const response = await fetch('/tareas/agregar', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 descripcion: descripcion,
                 puntos: puntos,
@@ -102,114 +98,37 @@
         
         const result = await response.json();
         if (result.success) {
-            // Recargar la página para ver la tarea añadida
             window.location.reload();
         } else {
-            // Reemplazar alert() con un mensaje en la interfaz
-            const messagesContainer = document.getElementById('messagesContainer');
-            messagesContainer.insertAdjacentHTML('beforebegin', `
-              <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                ${result.message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-              </div>
-            `);
+            // Manejo de errores
         }
     } catch (error) {
         console.error('Error al agregar tarea:', error);
-        // Reemplazar alert() con un mensaje en la interfaz
-        const messagesContainer = document.getElementById('messagesContainer');
-        messagesContainer.insertAdjacentHTML('beforebegin', `
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            Hubo un error al agregar la tarea.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
-        `);
     }
   });
 
   async function completarTarea(id) {
     try {
-      const response = await fetch(`/tareas/completar/${id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
+      const response = await fetch(`/tareas/completar/${id}`, { method: 'POST' });
       const result = await response.json();
       if (result.success) {
-        // Actualizar la interfaz sin recargar
-        const listItem = document.querySelector(`[onclick="completarTarea(${id})"]`).closest('.list-group-item');
-        listItem.classList.add('list-group-item-success');
-        listItem.querySelector('input[type="checkbox"]').checked = true;
-        listItem.querySelector('input[type="checkbox"]').disabled = true;
-        listItem.querySelector('h6').classList.add('text-decoration-line-through');
-
-        // Actualizar puntos de la mascota
-        puntosMascotaSpan.textContent = result.puntos_mascota;
-        
-        // Agregar un corazón a la mascota
-        const newHeart = document.createElement('img');
-        newHeart.src = "{{ url_for('static', filename='hearts.png') }}";
-        newHeart.alt = "corazón";
-        newHeart.classList.add('heart-icon');
-        heartsContainer.appendChild(newHeart);
-
-      } else {
-        // Reemplazar alert() con un mensaje en la interfaz
-        const messagesContainer = document.getElementById('messagesContainer');
-        messagesContainer.insertAdjacentHTML('beforebegin', `
-          <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            ${result.message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
-        `);
+        window.location.reload(); // Recargar para simplificar, o actualizar dinámicamente
       }
     } catch (error) {
-      console.error('Error al completar tarea:', error);
-      // Reemplazar alert() con un mensaje en la interfaz
-      const messagesContainer = document.getElementById('messagesContainer');
-      messagesContainer.insertAdjacentHTML('beforebegin', `
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          Hubo un error al completar la tarea.
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      `);
+        console.error('Error al completar tarea:', error);
     }
   }
 
   async function eliminarTarea(id) {
-    // Reemplazar confirm() con un modal de confirmación en la interfaz
     if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
       try {
-        const response = await fetch(`/tareas/eliminar/${id}`, {
-          method: 'DELETE',
-        });
-
+        const response = await fetch(`/tareas/eliminar/${id}`, { method: 'DELETE' });
         const result = await response.json();
         if (result.success) {
-          // Eliminar el elemento de la lista sin recargar
-          document.querySelector(`[onclick="eliminarTarea(${id})"]`).closest('.list-group-item').remove();
-        } else {
-          // Reemplazar alert() con un mensaje en la interfaz
-          const messagesContainer = document.getElementById('messagesContainer');
-          messagesContainer.insertAdjacentHTML('beforebegin', `
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-              ${result.message}
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-          `);
+            window.location.reload();
         }
       } catch (error) {
         console.error('Error al eliminar tarea:', error);
-        // Reemplazar alert() con un mensaje en la interfaz
-        const messagesContainer = document.getElementById('messagesContainer');
-        messagesContainer.insertAdjacentHTML('beforebegin', `
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            Hubo un error al eliminar la tarea.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
-        `);
       }
     }
   }
